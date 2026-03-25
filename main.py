@@ -1,3 +1,5 @@
+CORS
+from starlette.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field, field_validator
@@ -22,6 +24,14 @@ app = FastAPI(
     title="Task Manager API",
     description="A clean REST API for managing tasks",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
