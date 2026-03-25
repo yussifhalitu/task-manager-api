@@ -1,6 +1,5 @@
-CORS
-from starlette.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional
