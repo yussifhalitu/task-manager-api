@@ -1,0 +1,9 @@
+Create a new file called `.dockerignore`:
+```
+.venv/
+__pycache__/
+*.pyc
+.env
+tasks.db
+test.db
+.git/
