@@ -1,11 +1,10 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date
 from sqlalchemy.sql import func
 from database import Base
 
 
-# This class = one table in the database
 class TaskModel(Base):
-    __tablename__ = "tasks"         # table name in SQLite
+    __tablename__ = "tasks"
 
     id          = Column(Integer, primary_key=True, index=True)
     title       = Column(String(100), nullable=False)
@@ -14,6 +13,7 @@ class TaskModel(Base):
     priority    = Column(String(20), default="medium")
     owner       = Column(String(50), nullable=False)
     created_at  = Column(DateTime, server_default=func.now())
+    due_date    = Column(Date, nullable=True)      # ← NEW
 
 
 class UserModel(Base):

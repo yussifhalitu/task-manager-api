@@ -43,6 +43,7 @@ class Task(BaseModel):
     description: Optional[str] = Field(None, max_length=300)
     done: bool = Field(default=False)
     priority: Optional[str] = Field(default="medium")
+    due_date: Optional[str] = Field(None, description="Due date in YYYY-MM-DD format")
 
     @field_validator("title")
     @classmethod
@@ -58,6 +59,18 @@ class Task(BaseModel):
         if value not in allowed:
             raise ValueError(f"Priority must be one of: {allowed}")
         return value
+
+    @field_validator("due_date")
+    @classmethod
+    def due_date_must_be_valid(cls, value):
+        if value is None:
+            return value
+        try:
+            from datetime import datetime
+            datetime.strptime(value, "%Y-%m-%d")
+            return value
+        except ValueError:
+            raise ValueError("Due date must be in YYYY-MM-DD format")
 
 
 class TokenResponse(BaseModel):
@@ -174,12 +187,18 @@ def create_task(
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    from datetime import date
+    due = None
+    if task.due_date:
+        due = date.fromisoformat(task.due_date)
+
     new_task = TaskModel(
         title=task.title,
         description=task.description,
         done=task.done,
         priority=task.priority,
-        owner=current_user.username
+        owner=current_user.username,
+        due_date=due
     )
     db.add(new_task)
     db.commit()
@@ -194,6 +213,7 @@ def update_task(
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    from datetime import date
     task = find_task(task_id, db)
     if task.owner != current_user.username:
         raise HTTPException(status_code=403, detail="Not authorized to update this task")
@@ -201,6 +221,7 @@ def update_task(
     task.description = updated.description
     task.done        = updated.done
     task.priority    = updated.priority
+    task.due_date    = date.fromisoformat(updated.due_date) if updated.due_date else None
     db.commit()
     db.refresh(task)
     return task
