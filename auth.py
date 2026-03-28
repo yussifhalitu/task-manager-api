@@ -11,7 +11,7 @@ from models import UserModel
 
 SECRET_KEY = os.getenv("SECRET_KEY", "local-dev-secret-change-in-production")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
